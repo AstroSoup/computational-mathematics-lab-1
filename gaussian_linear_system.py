@@ -37,7 +37,7 @@ def find_triangle_matrix(matrix: list[list[float]]) -> list[list[float]]:
         
 
 def find_variable_vector(matrix: list[list[float]]) -> list[float]:
-
+    """Нахождение вектора решений"""
     n = len(matrix)
 
     matrix = [row[:] for row in matrix] # Копируем матрицу 
@@ -51,7 +51,7 @@ def find_variable_vector(matrix: list[list[float]]) -> list[float]:
     return ans[::-1]
 
 def find_vector_of_residuals(matrix: list[list[float]]) -> list[float]:
-    
+    """Нахождение вектора невязок"""
     n = len(matrix)
     matrix = [row[:] for row in matrix] # Копируем матрицу 
     variables = find_variable_vector(matrix)

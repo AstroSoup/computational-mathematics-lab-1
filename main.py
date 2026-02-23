@@ -1,15 +1,24 @@
 from prompt_toolkit import PromptSession
-from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.completion import NestedCompleter
 from prompt_toolkit import prompt
 import command_helper
 
 from pathlib import Path
+
+from prettytable import PrettyTable
 
 import sys
 
 import gaussian_linear_system
 
 app = command_helper.App()
+
+def prettify(matrix: list[list[float]]) -> PrettyTable:
+    table = PrettyTable()
+    table.header = False
+    for row in matrix:
+        table.add_row(row)
+    return table
 
 def parse_matrix(args: list[str]):
     if ("--from-file" in args and args.index("--from-file") + 1 < len(args)):
@@ -75,10 +84,8 @@ def triangle_matrix(args: list[str]):
                 matrix = gaussian_linear_system.np_find_triangle_matrix(matrix)
             else:
                 matrix = gaussian_linear_system.find_triangle_matrix(matrix)
-            for row in matrix:
-                for elem in row:
-                    print(elem, end=" ")
-                print("\n")
+            print(prettify(matrix))
+
 
 @app.command()
 def variable_vector(args: list[str]):
@@ -182,7 +189,13 @@ def exit(args: list[str]):
     """
     sys.exit()
 
-completer = WordCompleter(app.commands.keys(), sentence=True)
+dict = {}
+for key in app.commands.keys():
+    if (key not in ["exit", "help"]):
+        dict[key] = {"--from-file": None, "--numpy": None}
+    else:
+        dict[key] = None
+completer = NestedCompleter.from_nested_dict(dict)
 
 def main():
     session = PromptSession(completer=completer)
