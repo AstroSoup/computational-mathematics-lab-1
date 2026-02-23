@@ -25,7 +25,7 @@ def find_triangle_matrix(matrix: list[list[float]]) -> list[list[float]]:
         if (pivot_row != None):
             if (pivot_row != i): # если строка стоит не на своем месте меняем местами
                 matrix[pivot_row], matrix[i] = matrix[i], matrix[pivot_row]
-
+            print(matrix)
             for j in range(i + 1, n): # проходимся по всем строкам ниже и вычитаем из каждой строку по которой приводим
                 factor = matrix[j][i] / matrix[i][i] # множитель для конкретной строки
                 for k in range(i, len(matrix[j])):

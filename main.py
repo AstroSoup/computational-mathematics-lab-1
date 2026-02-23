@@ -44,7 +44,7 @@ def parse_matrix(args: list[str]):
             try:
                 matrix[-1].append(float(char))
             except ValueError:
-                print(f"В матрице найден недопустимый элемент {char} матрица должна состоять только из чисел.")
+                print(f"В матрице найден недопустимый элемент '{char}'. Матрица должна состоять только из чисел.")
                 return
     return matrix
 
@@ -147,10 +147,7 @@ def all_info(args: list[str]):
                 
                 print("Преобразованнная матрица:")
                 tmatrix = gaussian_linear_system.np_find_triangle_matrix(matrix)
-                for row in tmatrix:
-                    for elem in row:
-                        print(elem, end=" ")
-                    print("\n")
+                print(prettify(tmatrix))
 
                 print("Решение методом Гаусса:")
                 vector = gaussian_linear_system.np_find_variable_vector(matrix)
@@ -166,10 +163,7 @@ def all_info(args: list[str]):
                 
                 print("Преобразованнная матрица:")
                 tmatrix = gaussian_linear_system.find_triangle_matrix(matrix)
-                for row in tmatrix:
-                    for elem in row:
-                        print(elem, end=" ")
-                    print("\n")
+                print(prettify(tmatrix))
 
                 print("Решение методом Гаусса:")
                 vector = gaussian_linear_system.find_variable_vector(matrix)
@@ -207,12 +201,13 @@ def main():
         except EOFError:
             break
         else:
-            text = text.split()
-            if (text[0] in app.commands.keys()):
-                app.commands[text[0]](text[1:])
-            else:
-                print("Вы ввели недействительную команду. Возможные команды: \n")
-                app.commands["help"]()
+            if (text and not text.isspace()):
+                text = text.split()
+                if (text[0] in app.commands.keys()):
+                    app.commands[text[0]](text[1:])
+                else:
+                    print("Вы ввели недействительную команду. Возможные команды: \n")
+                    app.commands["help"]()
 
 
 if __name__ == '__main__':
