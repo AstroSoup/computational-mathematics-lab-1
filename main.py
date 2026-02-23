@@ -83,7 +83,7 @@ def triangle_matrix(args: list[str]):
             if ("--numpy" in args):
                 matrix = gaussian_linear_system.np_find_triangle_matrix(matrix)
             else:
-                matrix = gaussian_linear_system.find_triangle_matrix(matrix)
+                matrix, _ = gaussian_linear_system.find_triangle_matrix(matrix)
             print(prettify(matrix))
 
 
@@ -162,7 +162,7 @@ def all_info(args: list[str]):
                 print(gaussian_linear_system.find_determinant(matrix))
                 
                 print("Преобразованнная матрица:")
-                tmatrix = gaussian_linear_system.find_triangle_matrix(matrix)
+                tmatrix, _ = gaussian_linear_system.find_triangle_matrix(matrix)
                 print(prettify(tmatrix))
 
                 print("Решение методом Гаусса:")
