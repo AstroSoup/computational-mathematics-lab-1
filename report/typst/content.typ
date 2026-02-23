@@ -28,40 +28,53 @@ $x_2$ из третьего и всех последующих уравнени�
 = Листинг
 Далее приведен листинг функций используемых для нахождения определителя, треугольного представления матрицы коэффициентов, вектора решений и вектора невязок. Также приведены функции с использованием сторонних библиотек для нахождения всего вышеперечисленного.
 ```py
+
+
 def find_determinant(matrix: list[list[float]]) -> float:
     """Определитель матрицы"""
     n = len(matrix)
-    matrix = find_triangle_matrix(matrix)
-    ac = 1
-    for i in range(n):
-        ac *= matrix[i][i]
-    return ac
 
-def find_triangle_matrix(matrix: list[list[float]]) -> list[list[float]]:
-    """Приведение квадратной матрицы или СЛАУ того же ранга к треугольному виду"""
-    matrix = [row[:] for row in matrix] # Копируем матрицу 
+    triangle_matrix, swap_count = find_triangle_matrix(matrix)
+
+    det = 1.0
+    for i in range(n):
+        det *= triangle_matrix[i][i]
+
+    if swap_count % 2 != 0:
+        det = -det
+
+    return det
+
+
+def find_triangle_matrix(matrix: list[list[float]]) -> tuple[list[list[float]], int]:
+    """Приведение квадратной матрицы к треугольному виду.
+       Возвращает (треугольную матрицу, количество перестановок строк)
+    """
+    matrix = [row[:] for row in matrix]  # Копируем матрицу
     n = len(matrix)
+    swap_count = 0
 
     for i in range(n):
-        
+
         pivot_row = None
-        for j in range(i, n): # проходимся по строке и ищем по какому из элементов можно приводить матрицу
-            if (abs(matrix[j][i]) > 1e-12):
+        for j in range(i, n):
+            if abs(matrix[j][i]) > 1e-12:
                 pivot_row = j
                 break
-        
-        if (pivot_row != None):
-            if (pivot_row != i): # если строка стоит не на своем месте меняем местами
-                matrix[pivot_row], matrix[i] = matrix[i], matrix[pivot_row]
 
-            for j in range(i + 1, n): # проходимся по всем строкам ниже и вычитаем из каждой строку по которой приводим
-                factor = matrix[j][i] / matrix[i][i] # множитель для конкретной строки
-                for k in range(i, len(matrix[j])):
-                    matrix[j][k] -= factor * matrix[i][k]
-        else:
-            raise ValueError("Матрицу невозможно привести к треугольному виду.")
-            
-    return matrix
+        if pivot_row is None:
+            return matrix, swap_count
+
+        if pivot_row != i:
+            matrix[pivot_row], matrix[i] = matrix[i], matrix[pivot_row]
+            swap_count += 1
+
+        for j in range(i + 1, n):
+            factor = matrix[j][i] / matrix[i][i]
+            for k in range(i, n):
+                matrix[j][k] -= factor * matrix[i][k]
+
+    return matrix, swap_count
         
 
 def find_variable_vector(matrix: list[list[float]]) -> list[float]:
@@ -69,7 +82,7 @@ def find_variable_vector(matrix: list[list[float]]) -> list[float]:
     n = len(matrix)
 
     matrix = [row[:] for row in matrix] # Копируем матрицу 
-    matrix = find_triangle_matrix(matrix)
+    matrix, _ = find_triangle_matrix(matrix)
     ans = []
     for i in range(n - 1, -1, -1):
         matrix[i][n] /= matrix[i][i]

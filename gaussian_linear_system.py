@@ -17,8 +17,8 @@ def find_determinant(matrix: list[list[float]]) -> float:
 
 
 def find_triangle_matrix(matrix: list[list[float]]) -> tuple[list[list[float]], int]:
-    """Приведение квадратной матрицы к треугольному виду.
-       Возвращает (треугольную матрицу, количество перестановок строк)
+    """
+    Приведение квадратной матрицы к треугольному виду.
     """
     matrix = [row[:] for row in matrix]  # Копируем матрицу
     n = len(matrix)
