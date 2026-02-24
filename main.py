@@ -31,8 +31,10 @@ def parse_matrix(args: list[str]):
             return
     else: 
         print("Введите матрицу построчно, каждый новый элемент должен быть отделен от предыдущего пробелом. Для выхода из режима ввода нажмите esc, а затем enter.\nПример ввода:\n1 2 3\n4 5 6\n7 8 9\n")
-        input = prompt("", multiline=True)
-    
+        try:
+            input = prompt("", multiline=True)
+        except (KeyboardInterrupt, EOFError):
+            sys.exit()
     if not input.strip():
         print("Матрица не была введена. Пожалуйста, попробуйте еще раз указав матрицу.")
         return
@@ -47,6 +49,7 @@ def parse_matrix(args: list[str]):
                 print(f"В матрице найден недопустимый элемент '{char}'. Матрица должна состоять только из чисел.")
                 return
     return matrix
+
 
 
 @app.command()
@@ -142,12 +145,14 @@ def all_info(args: list[str]):
             print("СЛАУ должна быть определенной.")
         else:
             if ("--numpy" in args):
-                print("Определитель:")
-                print(gaussian_linear_system.np_find_determinant(matrix))
-                
                 print("Преобразованнная матрица:")
                 tmatrix = gaussian_linear_system.np_find_triangle_matrix(matrix)
                 print(prettify(tmatrix))
+            
+                print("Определитель:")
+                print(gaussian_linear_system.np_find_determinant(matrix))
+                
+
 
                 print("Решение методом Гаусса:")
                 vector = gaussian_linear_system.np_find_variable_vector(matrix)
@@ -158,21 +163,26 @@ def all_info(args: list[str]):
                 for i in range(len(vector)):
                     print(f"r[{i + 1}] = {vector[i]}")
             else:
-                print("Определитель:")
-                print(gaussian_linear_system.find_determinant(matrix))
-                
-                print("Преобразованнная матрица:")
-                tmatrix, _ = gaussian_linear_system.find_triangle_matrix(matrix)
-                print(prettify(tmatrix))
+                try:
+                    print("Преобразованнная матрица:")
+                    tmatrix, _ = gaussian_linear_system.find_triangle_matrix(matrix)
+                    print(prettify(tmatrix))
 
-                print("Решение методом Гаусса:")
-                vector = gaussian_linear_system.find_variable_vector(matrix)
-                for i in range(len(vector)):
-                    print(f"x[{i + 1}] = {vector[i]}")
-                print("Вектор невязки:")
-                vector = gaussian_linear_system.find_vector_of_residuals(matrix)
-                for i in range(len(vector)):
-                    print(f"r[{i + 1}] = {vector[i]}")
+                    print("Определитель:")
+                    print(gaussian_linear_system.find_determinant(matrix))
+                    
+
+
+                    print("Решение методом Гаусса:")
+                    vector = gaussian_linear_system.find_variable_vector(matrix)
+                    for i in range(len(vector)):
+                        print(f"x[{i + 1}] = {vector[i]}")
+                    print("Вектор невязки:")
+                    vector = gaussian_linear_system.find_vector_of_residuals(matrix)
+                    for i in range(len(vector)):
+                        print(f"r[{i + 1}] = {vector[i]}")
+                except ValueError as e:
+                    print(e)
 
 
 @app.command()
